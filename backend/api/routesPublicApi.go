@@ -28,9 +28,15 @@ func (s *Server) serviceInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 // Health Status handler
 func (s *Server) healthStatusHandler(w http.ResponseWriter, r *http.Request) {
+	engineStatus := "unavailable"
+
+	if s.browserPool.IsReady() {
+		engineStatus = "ready"
+	}
+
 	writeJSON(w, http.StatusOK, map[string]string{
 		"time":   getElapsedtime(r).String(),
 		"status": "ok",
-		"engine": "ready",
+		"engine": engineStatus,
 	})
 }
