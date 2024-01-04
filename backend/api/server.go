@@ -20,14 +20,26 @@ func NewServer(config *ServerConfig) *Server {
 func (s *Server) Start() {
 	fmt.Println("Starting server")
 
-	addr := s.Config.Host + ":" + fmt.Sprint(s.Config.Port)
+	fmt.Println("Server listening on " + s.GetURL())
 
-	fmt.Println("Server listening on http://" + addr)
-
-	http.ListenAndServe(addr, s.initRouter())
+	http.ListenAndServe(s.GetAddress(), s.initRouter())
 }
 
 // Stops the server
 func (s *Server) Stop() {
 	fmt.Println("Stopping server")
+}
+
+// Get Address
+func (s *Server) GetAddress() string {
+	return s.Config.Host + ":" + fmt.Sprint(s.Config.Port)
+}
+
+// Get URL
+func (s *Server) GetURL() string {
+	if s.Config.SSL {
+		return "https://" + s.GetAddress()
+	}
+
+	return "http://" + s.GetAddress()
 }

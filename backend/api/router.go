@@ -35,6 +35,9 @@ func (s *Server) initRouter() *chi.Mux {
 	// Register routes for App API
 	r.Route("/app", s.getAppRouter)
 
+	// Default handler
+	r.Get("/", s.defaultHandler)
+
 	return r
 }
 
@@ -45,4 +48,15 @@ func (s *Server) getV1Router(r chi.Router) {
 
 	// Private API routes (API key authentication)
 	r.Group(s.getPrivateApiRouter)
+}
+
+// Default handler displays service info and available versions
+func (s *Server) defaultHandler(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"service": "web2image",
+		"time":    getElapsedtime(r).String(),
+		"versions": map[string]string{
+			"v1": s.GetURL() + "/v1",
+		},
+	})
 }
