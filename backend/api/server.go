@@ -3,22 +3,29 @@ package api
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/paupenin/web2image/backend/browser"
 )
 
 type Server struct {
-	Config *ServerConfig
+	Config      *ServerConfig
+	browserPool *browser.BrowserPool
 }
 
 // Creates a new server
 func NewServer(config *ServerConfig) *Server {
 	return &Server{
-		Config: config,
+		Config:      config,
+		browserPool: browser.NewBrowserPool(3),
 	}
 }
 
 // Starts the server
 func (s *Server) Start() {
 	fmt.Println("Starting server")
+
+	// Initialize the browser pool
+	s.browserPool.Init()
 
 	fmt.Println("Server listening on " + s.GetURL())
 
