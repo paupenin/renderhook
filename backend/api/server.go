@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	"github.com/paupenin/web2image/backend/browser"
+	"github.com/paupenin/web2image/backend/store"
 )
 
 type Server struct {
 	Config      *ServerConfig
 	browserPool *browser.BrowserPool
+	imageStore  store.ImageStore
 }
 
 // Creates a new server
@@ -17,6 +19,7 @@ func NewServer(config *ServerConfig) *Server {
 	return &Server{
 		Config:      config,
 		browserPool: browser.NewBrowserPool(3),
+		imageStore:  store.NewImageStore(store.ImageStoreConfig{Path: "./images"}),
 	}
 }
 
