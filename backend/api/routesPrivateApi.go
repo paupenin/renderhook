@@ -1,7 +1,10 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -24,9 +27,65 @@ func (s *Server) getPrivateApiRouter(r chi.Router) {
 func (s *Server) renderHtmlHandler(w http.ResponseWriter, r *http.Request) {
 	html := r.FormValue("html")
 
+	// Validate HTML
+	if html == "" {
+		writeError(w, http.StatusBadRequest, fmt.Errorf("empty HTML"))
+		return
+	}
+	// TODO: Validate HTML
+	// if html == "" {
+	// 	writeError(w, http.StatusBadRequest, fmt.Errorf("invalid HTML"))
+	// 	return
+	// }
+
+	// Example http.html file
+	if html == "http.html" {
+		exampleHtml, err := os.ReadFile("../examples/http.html")
+
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot read example file"))
+			return
+		}
+
+		html = string(exampleHtml)
+	}
+
+	// Example inline.html file
+	if html == "inline.html" {
+		exampleHtml, err := os.ReadFile("../examples/inline.html")
+
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot read example file"))
+			return
+		}
+
+		html = string(exampleHtml)
+	}
+
+	// Grab a browser instance from the pool
+	browser := s.browserPool.GetBrowser()
+
+	// Render HTML
+	image, err := browser.RenderHTML(html)
+
+	if (err != nil) || (image == nil) {
+		writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot render HTML"))
+		return
+	}
+
+	// Store image
+	imageFilename := generateRandomString(10) + ".jpg"
+	err = s.imageStore.StoreFile(imageFilename, image)
+
+	if err != nil {
+		log.Println(err)
+		writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot store image"))
+		return
+	}
+
 	writeJSON(w, http.StatusOK, map[string]string{
-		"time": getElapsedtime(r).String(),
-		"html": html,
+		"time":  getElapsedtime(r).String(),
+		"image": s.imageStore.GetFileURL(imageFilename),
 	})
 }
 
@@ -36,38 +95,32 @@ func (s *Server) renderUrlHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate URL
 	if !isValidUrl(url) {
-		writeJSON(w, http.StatusBadRequest, map[string]string{
-			"error": "Invalid URL",
-		})
+		writeError(w, http.StatusBadRequest, fmt.Errorf("invalid URL"))
 		return
 	}
 
 	// Grab a browser instance from the pool
 	browser := s.browserPool.GetBrowser()
 
+	// Render URL
 	image, err := browser.RenderURL(url)
 
 	if (err != nil) || (image == nil) {
-		writeJSON(w, http.StatusInternalServerError, map[string]string{
-			"error": "Cannot render URL",
-		})
+		writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot render URL"))
 		return
 	}
 
 	// Store image
 	imageFilename := generateRandomString(10) + ".jpg"
-	err = s.imageStore.StoreImage(imageFilename, image)
+	err = s.imageStore.StoreFile(imageFilename, image)
 
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]string{
-			"error": "Cannot store image",
-		})
+		writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot store image"))
 		return
 	}
 
 	writeJSON(w, http.StatusOK, map[string]string{
 		"time":  getElapsedtime(r).String(),
-		"url":   url,
-		"image": s.GetURL() + s.imageStore.GetImagePath(imageFilename),
+		"image": s.imageStore.GetFileURL(imageFilename),
 	})
 }
