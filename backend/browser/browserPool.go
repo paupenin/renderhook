@@ -1,5 +1,7 @@
 package browser
 
+import "github.com/paupenin/web2image/backend/config"
+
 // Browser pool
 type BrowserPool struct {
 	// Amount of desired browsers
@@ -9,9 +11,9 @@ type BrowserPool struct {
 }
 
 // NewBrowserPool creates a new browser pool
-func NewBrowserPool(amount int) *BrowserPool {
+func NewBrowserPool(c config.BrowserPoolConfig) *BrowserPool {
 	return &BrowserPool{
-		amount: amount,
+		amount: c.MaxBrowsers,
 	}
 }
 
@@ -20,7 +22,7 @@ func (bp *BrowserPool) Init() error {
 	for i := 0; i < bp.amount; i++ {
 		browser := NewBrowser()
 
-		err := browser.Connect()
+		err := browser.Init()
 
 		if err != nil {
 			return err
@@ -35,7 +37,7 @@ func (bp *BrowserPool) Init() error {
 // Destroy destroys the browser pool
 func (bp *BrowserPool) Destroy() error {
 	for _, browser := range bp.browsers {
-		browser.Close()
+		browser.Destroy()
 	}
 
 	return nil

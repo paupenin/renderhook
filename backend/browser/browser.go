@@ -10,7 +10,8 @@ import (
 
 // Browser is the render engine
 type Browser struct {
-	rod *rod.Browser
+	rod  *rod.Browser
+	page *rod.Page
 }
 
 // NewBrowser creates a new browser
@@ -18,17 +19,19 @@ func NewBrowser() *Browser {
 	return &Browser{}
 }
 
-// Connect connects to the browser
-func (b *Browser) Connect() error {
-	browser := rod.New().MustConnect()
+// Init connects to the browser and creates a new page
+func (b *Browser) Init() error {
+	// Initialize browser
+	b.rod = rod.New().MustConnect()
 
-	b.rod = browser
+	// Create page
+	b.page = b.rod.MustPage()
 
 	return nil
 }
 
-// Close closes the browser
-func (b *Browser) Close() error {
+// Destroy closes the browser
+func (b *Browser) Destroy() error {
 	b.rod.MustClose()
 
 	return nil
@@ -39,7 +42,7 @@ func (b *Browser) RenderHTML(html string) ([]byte, error) {
 	fmt.Println("Rendering HTML string")
 
 	// Load page
-	page := b.rod.MustPage()
+	page := b.page
 
 	// Set viewport
 	page.MustSetViewport(500, 500, 2, false)
@@ -62,7 +65,7 @@ func (b *Browser) RenderURL(url string) ([]byte, error) {
 	fmt.Println("Rendering URL: ", url)
 
 	// Load page
-	page := b.rod.MustPage(url)
+	page := b.page
 
 	// Set viewport
 	page.SetViewport(&proto.EmulationSetDeviceMetricsOverride{
@@ -70,6 +73,9 @@ func (b *Browser) RenderURL(url string) ([]byte, error) {
 		DeviceScaleFactor: 2,
 		Mobile:            false,
 	})
+
+	// Navigate to URL
+	page.Navigate(url)
 
 	// Wait for page to load
 	page.WaitLoad()
