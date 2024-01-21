@@ -29,6 +29,11 @@ func (s *Server) initRouter() *chi.Mux {
 		writeError(w, http.StatusMethodNotAllowed, fmt.Errorf("method not allowed"))
 	})
 
+	// Serve static files from the image store if it should serve static files
+	if s.imageStore.ShouldServeStatic() {
+		r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir(s.imageStore.GetStaticPath()))))
+	}
+
 	// Register routes for v1
 	r.Route("/v1", s.getV1Router)
 
@@ -56,7 +61,7 @@ func (s *Server) defaultHandler(w http.ResponseWriter, r *http.Request) {
 		"service": "web2image",
 		"time":    getElapsedtime(r).String(),
 		"versions": map[string]string{
-			"v1": s.GetURL() + "/v1",
+			"v1": s.config.GetURL() + "/v1",
 		},
 	})
 }

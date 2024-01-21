@@ -1,10 +1,13 @@
 package main
 
-import "github.com/paupenin/web2image/backend/api"
+import (
+	"github.com/paupenin/web2image/backend/api"
+	"github.com/paupenin/web2image/backend/config"
+)
 
 func main() {
 	// Build and start the server
 	api.NewServer(
-		api.NewServerConfig(),
+		config.NewServerConfig(),
 	).Start()
 }
