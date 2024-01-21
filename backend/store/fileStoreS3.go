@@ -1,43 +1,72 @@
 package store
 
-import "github.com/paupenin/web2image/backend/config"
+import (
+	"bytes"
+	"fmt"
+	"log"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/paupenin/web2image/backend/config"
+)
+
+type S3API interface {
+	PutObject(input *s3.PutObjectInput) (*s3.PutObjectOutput, error)
+	DeleteObject(input *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error)
+}
 
 type FileStoreS3 struct {
 	config *config.FileStoreS3Config
+	client S3API
 }
 
-func NewFileStoreS3(c *config.FileStoreS3Config) *FileStoreS3 {
+func NewFileStoreS3(cfg *config.FileStoreS3Config) *FileStoreS3 {
+	sess, err := session.NewSession(&aws.Config{
+		Region:           aws.String(cfg.Region),
+		Endpoint:         aws.String(cfg.Endpoint),
+		Credentials:      credentials.NewStaticCredentials(cfg.AccessKey, cfg.SecretKey, ""),
+		S3ForcePathStyle: aws.Bool(cfg.S3ForcePathStyle),
+		DisableSSL:       aws.Bool(!cfg.SSL),
+	})
+	if err != nil {
+		log.Fatal("error creating AWS session: %w", err)
+		return nil
+	}
+
 	return &FileStoreS3{
-		config: c,
+		config: cfg,
+		client: s3.New(sess),
 	}
 }
 
-// ShouldServeStatic returns whether the file store should serve static files
 func (s *FileStoreS3) ShouldServeStatic() bool {
 	return false
 }
 
-// GetStaticPath gets the path to the static file store
 func (s *FileStoreS3) GetStaticPath() string {
-	return ""
+	return "" // Not applicable for S3
 }
 
-// GetURL gets the public URL to the file store
-func (s *FileStoreS3) GetURL() string {
-	return ""
-}
-
-// StoreFile stores a file
 func (s *FileStoreS3) StoreFile(filename string, file []byte) error {
-	return nil
+	_, err := s.client.PutObject(&s3.PutObjectInput{
+		Bucket:      aws.String(s.config.BucketName),
+		Key:         aws.String(filename),
+		Body:        bytes.NewReader(file),
+		ContentType: aws.String("application/octet-stream"), // Update as needed
+	})
+	return err
 }
 
-// GetFileURL gets the URL of an image
 func (s *FileStoreS3) GetFileURL(filename string) string {
-	return ""
+	return fmt.Sprintf("%s/%s", s.config.Endpoint, filename)
 }
 
-// DeleteImage deletes an image
 func (s *FileStoreS3) DeleteFile(filename string) error {
-	return nil
+	_, err := s.client.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(s.config.BucketName),
+		Key:    aws.String(filename),
+	})
+	return err
 }

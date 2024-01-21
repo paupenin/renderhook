@@ -1,8 +1,6 @@
 package store
 
 import (
-	"log"
-
 	"github.com/paupenin/web2image/backend/config"
 )
 
@@ -10,10 +8,8 @@ import (
 type FileStore interface {
 	// ShouldServeStatic returns whether the file store should serve static files
 	ShouldServeStatic() bool
-	// GetStaticPath gets the path to the static file store
+	// GetStaticPath gets the path to the static file store directory (if applicable)
 	GetStaticPath() string
-	// GetStaticURL gets the public URL to the file store
-	GetURL() string
 	// StoreFile stores a file
 	StoreFile(filename string, file []byte) error
 	// GetFileURL gets the public URL of a file
@@ -24,13 +20,16 @@ type FileStore interface {
 
 func NewFileStore(c config.FileStoreConfig) FileStore {
 	switch c := c.(type) {
+	// File Store S3 (production)
+	case *config.FileStoreS3Config:
+		return NewFileStoreS3(c)
+
+	// File Store FS (development)
 	case *config.FileStoreFSConfig:
 		return NewFileStoreFS(c)
 
-	case *config.FileStoreS3Config:
-		return NewFileStoreS3(c)
+	// File Store Memory (testing)
+	default:
+		return NewFileStoreMemory()
 	}
-
-	log.Fatal("Unknown file store type")
-	return nil
 }

@@ -5,12 +5,7 @@ const (
 	StorageTypeS3    = "s3"
 )
 
-type FileStoreConfig interface {
-	// The type of storage system (local, s3)
-	Type() string
-	// Whether the storage system should serve static files
-	ShouldServeStatic() bool
-}
+type FileStoreConfig interface{}
 
 // NewStorageConfig creates a new storage config
 func NewFileStoreConfig() FileStoreConfig {
@@ -18,10 +13,13 @@ func NewFileStoreConfig() FileStoreConfig {
 
 	if storageType == StorageTypeS3 {
 		return &FileStoreS3Config{
-			BucketName: Env("STORAGE_S3_BUCKET_NAME", ""),
-			Region:     Env("STORAGE_S3_REGION", ""),
-			AccessKey:  Env("STORAGE_S3_ACCESS_KEY", ""),
-			SecretKey:  Env("STORAGE_S3_SECRET_KEY", ""),
+			BucketName:       Env("STORAGE_S3_BUCKET_NAME", ""),
+			Region:           Env("STORAGE_S3_REGION", ""),
+			AccessKey:        Env("STORAGE_S3_ACCESS_KEY", ""),
+			SecretKey:        Env("STORAGE_S3_SECRET_KEY", ""),
+			Endpoint:         Env("STORAGE_S3_ENDPOINT", ""),
+			SSL:              EnvBool("STORAGE_S3_SSL", true),
+			S3ForcePathStyle: EnvBool("STORAGE_S3_FORCE_PATH_STYLE", false),
 		}
 	}
 
@@ -37,26 +35,13 @@ type FileStoreFSConfig struct {
 	PublicURL string
 }
 
-func (c *FileStoreFSConfig) Type() string {
-	return StorageTypeLocal
-}
-
-func (c *FileStoreFSConfig) ShouldServeStatic() bool {
-	return true
-}
-
 // S3Config struct for S3 configuration
 type FileStoreS3Config struct {
-	BucketName string
-	Region     string
-	AccessKey  string
-	SecretKey  string
-}
-
-func (c *FileStoreS3Config) Type() string {
-	return StorageTypeS3
-}
-
-func (c *FileStoreS3Config) ShouldServeStatic() bool {
-	return false
+	BucketName       string
+	Region           string
+	AccessKey        string
+	SecretKey        string
+	Endpoint         string // Endpoint URL of the S3-compatible service
+	SSL              bool   // Whether to use SSL (HTTPS)
+	S3ForcePathStyle bool   // Use path style for bucket access
 }
