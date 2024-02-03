@@ -20,7 +20,13 @@ func EnvBool(key string, defaultValue bool) bool {
 		return defaultValue
 	}
 
-	return value == "true"
+	// Convert string to bool or panic
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		panic("Invalid value for " + key + " environment variable, must be a boolean")
+	}
+
+	return boolValue
 }
 
 func EnvInt(key string, defaultValue int) int {
@@ -29,10 +35,10 @@ func EnvInt(key string, defaultValue int) int {
 		return defaultValue
 	}
 
-	// Convert string to int (if not possible, return default value)
+	// Convert string to int or panic
 	strconvValue, err := strconv.Atoi(value)
 	if err != nil {
-		return defaultValue
+		panic("Invalid value for " + key + " environment variable, must be an integer")
 	}
 
 	return strconvValue
