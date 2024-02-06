@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -17,17 +16,9 @@ func (s *Server) initRouter() *chi.Mux {
 	// Add StartTimeMiddleware
 	r.Use(middleware.StartTimeMiddleware)
 
-	// NotFound handler
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		// No logging here, no one cares about 404s
-		writeError(w, http.StatusNotFound, fmt.Errorf("not found"))
-	})
-
-	// MethodNotAllowed handler
-	r.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
-		// No logging here, no one cares about 405s
-		writeError(w, http.StatusMethodNotAllowed, fmt.Errorf("method not allowed"))
-	})
+	// Default handlers
+	r.NotFound(s.notFoundHandler)
+	r.MethodNotAllowed(s.methodNotAllowedHandler)
 
 	// Serve static files from the image store if it should serve static files
 	if s.imageStore.ShouldServeStatic() {
@@ -40,8 +31,8 @@ func (s *Server) initRouter() *chi.Mux {
 	// Register routes for App API
 	r.Route("/app", s.getAppRouter)
 
-	// Default handler
-	r.Get("/", s.defaultHandler)
+	// Default index handler
+	r.Get("/", s.indexHandler)
 
 	return r
 }
@@ -53,15 +44,4 @@ func (s *Server) getV1Router(r chi.Router) {
 
 	// Private API routes (API key authentication)
 	r.Group(s.getPrivateApiRouter)
-}
-
-// Default handler displays service info and available versions
-func (s *Server) defaultHandler(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"service": "web2image",
-		"time":    getElapsedtime(r).String(),
-		"versions": map[string]string{
-			"v1": s.config.GetURL() + "/v1",
-		},
-	})
 }
