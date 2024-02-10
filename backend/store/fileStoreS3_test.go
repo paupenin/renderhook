@@ -3,7 +3,7 @@ package store
 import (
 	"testing"
 
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 func setupTestFileStoreS3(t *testing.T) (*FileStoreS3, *MockS3Client) {

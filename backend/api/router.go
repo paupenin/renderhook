@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/paupenin/web2image/backend/api/middleware"
+	"github.com/paupenin/renderhook/backend/api/middleware"
 )
 
 func (s *Server) initRouter() *chi.Mux {

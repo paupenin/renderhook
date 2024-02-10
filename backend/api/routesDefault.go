@@ -8,7 +8,7 @@ import (
 // Default index handler
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"service": "web2image",
+		"service": "renderhook",
 		"time":    getElapsedtime(r).String(),
 		"versions": map[string]string{
 			"v1": s.config.GetURL() + "/v1",

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 func setupTestFileStoreFS(t *testing.T) (*FileStoreFS, string) {

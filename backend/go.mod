@@ -1,4 +1,4 @@
-module github.com/paupenin/web2image/backend
+module github.com/paupenin/renderhook/backend
 
 go 1.21.5
 

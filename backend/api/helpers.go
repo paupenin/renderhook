@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/paupenin/web2image/backend/api/middleware"
+	"github.com/paupenin/renderhook/backend/api/middleware"
 )
 
 func writeJSON(w http.ResponseWriter, status int, v any) error {

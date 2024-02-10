@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/paupenin/web2image/backend/api/middleware"
-	"github.com/paupenin/web2image/backend/test"
+	"github.com/paupenin/renderhook/backend/api/middleware"
+	"github.com/paupenin/renderhook/backend/test"
 )
 
 func TestServiceInfoHandler(t *testing.T) {
@@ -17,7 +17,7 @@ func TestServiceInfoHandler(t *testing.T) {
 		middleware.StartTimeMiddleware,
 	).Get("/v1").Status(http.StatusOK).JSON()
 
-	test.Assert(json["service"]).Equal("web2image")
+	test.Assert(json["service"]).Equal("renderhook")
 	test.Assert(json["time"]).NotEmpty()
 	test.Assert(json["version"]).Equal("1.0.0")
 }

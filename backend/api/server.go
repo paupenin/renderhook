@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/paupenin/web2image/backend/browser"
-	"github.com/paupenin/web2image/backend/config"
-	"github.com/paupenin/web2image/backend/store"
+	"github.com/paupenin/renderhook/backend/browser"
+	"github.com/paupenin/renderhook/backend/config"
+	"github.com/paupenin/renderhook/backend/store"
 )
 
 type Server struct {

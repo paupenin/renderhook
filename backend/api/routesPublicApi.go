@@ -20,7 +20,7 @@ func (s *Server) getPublicApiRouter(r chi.Router) {
 // Service info handler
 func (s *Server) serviceInfoHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{
-		"service": "web2image",
+		"service": "renderhook",
 		"time":    getElapsedtime(r).String(),
 		"version": "1.0.0",
 	})

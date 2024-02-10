@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 // Interface for all file stores

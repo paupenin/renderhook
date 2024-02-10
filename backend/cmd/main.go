@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/paupenin/web2image/backend/api"
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/api"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 func main() {

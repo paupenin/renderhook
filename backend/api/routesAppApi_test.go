@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/paupenin/web2image/backend/api/middleware"
-	"github.com/paupenin/web2image/backend/test"
+	"github.com/paupenin/renderhook/backend/api/middleware"
+	"github.com/paupenin/renderhook/backend/test"
 )
 
 func TestGetCurrentUserHandler(t *testing.T) {

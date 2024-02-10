@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 func TestNewFileStore(t *testing.T) {

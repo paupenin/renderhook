@@ -1,6 +1,6 @@
 package browser
 
-import "github.com/paupenin/web2image/backend/config"
+import "github.com/paupenin/renderhook/backend/config"
 
 // Browser pool
 type BrowserPool struct {

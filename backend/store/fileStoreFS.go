@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/paupenin/web2image/backend/config"
+	"github.com/paupenin/renderhook/backend/config"
 )
 
 type FileStoreFS struct {
