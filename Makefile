@@ -25,7 +25,7 @@ be-dev:
 
 be-build:
 	@echo "Building the Go backend..."
-	cd $(BE_DIR) && go build -o $(BE_BUILD_DIR)/app cmd/main.go
+	cd $(BE_DIR) && go build -o dist/main cmd/main.go
 
 be-test:
 	@echo "Running tests for the Go backend..."
