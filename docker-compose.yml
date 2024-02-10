@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.backend
+    volumes:
+      - ./store/images:/store/images
+    environment:
+      - SERVER_PORT=8080
+      - PUBLIC_URL=http://dev.renderhook.com
+      - STORAGE_FS_DIRECTORY=/store/images
+      - STORAGE_FS_PUBLIC_URL=http://dev.renderhook.com/images
+    ports:
+      - "80:8080"

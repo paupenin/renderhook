@@ -1,0 +1,32 @@
+# Stage 1: Build the application
+# Use golang:1.22.0 as the base image
+FROM golang:1.22.0 AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install the go dependencies (cached if the go.mod and go.sum haven't changed)
+COPY ./backend/go.mod ./backend/go.sum ./
+RUN go mod download
+
+# Copy the service directory to the container
+COPY ./backend .
+
+# Build your application
+RUN go build -o dist/backend-app ./cmd/main.go
+
+# Stage 2: Run the application
+# Use ghcr.io/go-rod/rod as the base image
+FROM ghcr.io/go-rod/rod:v0.114.7
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/dist/backend-app .
+
+# Copy examples directory to the container
+COPY ./examples ../examples
+
+# Command to run your application
+CMD ["./backend-app"]
