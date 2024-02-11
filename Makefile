@@ -2,23 +2,28 @@
 
 # Backend variables
 BE_DIR := backend
-BE_BUILD_DIR := $(BE_DIR)/bin
+BE_BUILD_DIR := $(BE_DIR)/dist
 
 # Frontend variables
-FE_DIR := frontend
-FE_BUILD_DIR := $(FE_DIR)/build
+FE_DIR := site
+FE_BUILD_DIR := $(FE_DIR)/.next
 
 # Common tasks
 .PHONY: all clean dev
 
-all: be fe
+all: clean be fe
 dev: be-dev fe-dev
 test: be-test fe-test
 
 # Backend tasks
-.PHONY: be be-build be-test be-dev
+.PHONY: be be-install be-dev be-build be-test
 
-be: be-build be-test
+be: be-install be-build be-test
+
+be-install:
+	@echo "Installing dependencies for the Go backend..."
+	cd $(BE_DIR) && go mod download
+
 be-dev:
 	@echo "Starting the Go backend in development mode..."
 	cd $(BE_DIR) && gow run cmd/main.go
@@ -34,21 +39,26 @@ be-test:
 # Frontend tasks
 .PHONY: fe fe-build fe-test fe-dev
 
-fe: fe-build fe-test
+fe: fe-install fe-build fe-test
+
+fe-install:
+	@echo "Installing dependencies for the NextJS site..."
+	cd $(FE_DIR) && yarn install
+
 fe-dev:
-	@echo "Starting the SvelteKit frontend in development mode..."
-	cd $(FE_DIR) && npm run dev
+	@echo "Starting the NextJS site in development mode..."
+	cd $(FE_DIR) && yarn dev
 
 fe-build:
-	@echo "Building the SvelteKit frontend..."
-	cd $(FE_DIR) && npm run build
+	@echo "Building the NextJS site..."
+	cd $(FE_DIR) && yarn build
 
 fe-test:
-	@echo "Running tests for the SvelteKit frontend..."
-	cd $(FE_DIR) && npm test
+	@echo "Running tests for the NextJS site..."
+	cd $(FE_DIR) && yarn test
 
 # Clean task
 clean:
 	@echo "Cleaning up..."
-	rm -rf $(BE_BUILD_DIR)/*
-	rm -rf $(FE_BUILD_DIR)/*
+	rm -Rf $(BE_BUILD_DIR)
+	rm -Rf $(FE_BUILD_DIR)
