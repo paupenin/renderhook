@@ -16,6 +16,7 @@ func setupTestFileStoreS3(t *testing.T) (*FileStoreS3, *MockS3Client) {
 		Endpoint:   "testendpoint",
 		AccessKey:  "testaccesskey",
 		SecretKey:  "testsecretkey",
+		PublicURL:  "testpublicurl",
 	}
 
 	// Create a mock S3 client
@@ -66,7 +67,7 @@ func TestFileStoreS3_GetFileURL(t *testing.T) {
 	fs, _ := setupTestFileStoreS3(t)
 
 	filename := "test.txt"
-	expectedURL := "testendpoint/test.txt"
+	expectedURL := "testpublicurl/test.txt"
 
 	if url := fs.GetFileURL(filename); url != expectedURL {
 		t.Errorf("GetFileURL returned wrong URL: got %v, want %v", url, expectedURL)

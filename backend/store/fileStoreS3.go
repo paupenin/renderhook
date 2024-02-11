@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -54,13 +55,13 @@ func (s *FileStoreS3) StoreFile(filename string, file []byte) error {
 		Bucket:      aws.String(s.config.BucketName),
 		Key:         aws.String(filename),
 		Body:        bytes.NewReader(file),
-		ContentType: aws.String("application/octet-stream"), // Update as needed
+		ContentType: aws.String(s.getContentType(file)),
 	})
 	return err
 }
 
 func (s *FileStoreS3) GetFileURL(filename string) string {
-	return fmt.Sprintf("%s/%s", s.config.Endpoint, filename)
+	return fmt.Sprintf("%s/%s", s.config.PublicURL, filename)
 }
 
 func (s *FileStoreS3) DeleteFile(filename string) error {
@@ -69,4 +70,16 @@ func (s *FileStoreS3) DeleteFile(filename string) error {
 		Key:    aws.String(filename),
 	})
 	return err
+}
+
+// getContentType returns the MIME type of the file based on its first 512 bytes.
+func (s *FileStoreS3) getContentType(file []byte) string {
+	// Ensure the slice has at least 512 bytes to avoid slicing beyond its length.
+	n := 512
+	if len(file) < 512 {
+		n = len(file)
+	}
+
+	// Detect and return the content type of the file.
+	return http.DetectContentType(file[:n])
 }
