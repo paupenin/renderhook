@@ -75,7 +75,7 @@ func (s *Server) renderHtmlHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Store image
 	imageFilename := generateRandomString(10) + ".jpg"
-	err = s.imageStore.StoreFile(imageFilename, image)
+	err = s.imageStore.StoreFile("fr/"+imageFilename, image)
 
 	if err != nil {
 		log.Println(err)
@@ -112,7 +112,7 @@ func (s *Server) renderUrlHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Store image
 	imageFilename := generateRandomString(10) + ".jpg"
-	err = s.imageStore.StoreFile(imageFilename, image)
+	err = s.imageStore.StoreFile("fr/"+imageFilename, image)
 
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, fmt.Errorf("cannot store image"))
