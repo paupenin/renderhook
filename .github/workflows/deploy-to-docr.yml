@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "backend/**"
+      - ".docker/Dockerfile.backend"
 
 jobs:
   deploy:
