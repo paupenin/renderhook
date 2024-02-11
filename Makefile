@@ -43,19 +43,19 @@ fe: fe-install fe-build fe-test
 
 fe-install:
 	@echo "Installing dependencies for the NextJS site..."
-	cd $(FE_DIR) && yarn install
+	cd $(FE_DIR) && bun install
 
 fe-dev:
 	@echo "Starting the NextJS site in development mode..."
-	cd $(FE_DIR) && yarn dev
+	cd $(FE_DIR) && bun run dev
 
 fe-build:
 	@echo "Building the NextJS site..."
-	cd $(FE_DIR) && yarn build
+	cd $(FE_DIR) && bun run build
 
 fe-test:
 	@echo "Running tests for the NextJS site..."
-	cd $(FE_DIR) && yarn test
+	cd $(FE_DIR) && bun run test
 
 # Clean task
 clean:
