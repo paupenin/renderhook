@@ -1,4 +1,4 @@
-# Makefile for a monorepo with Go (backend) and SvelteKit (frontend)
+# Makefile for a monorepo with Go (backend) and NextJS (frontend)
 
 # Backend variables
 BE_DIR := backend
@@ -11,14 +11,25 @@ FE_BUILD_DIR := $(FE_DIR)/.next
 # Common tasks
 .PHONY: all clean dev
 
-all: clean be fe
-dev: be-dev fe-dev
+all:
+	@echo "Installing and starting the backend and frontend in development mode..."
+	make install
+	make dev
+
+install: clean be-install fe-install
+
+dev:
+	@echo "Starting backend and frontend in development mode..."
+	concurrently --kill-others "make be-dev" "make fe-dev"
+
+build: clean be-build fe-build
+
 test: be-test fe-test
 
 # Backend tasks
 .PHONY: be be-install be-dev be-build be-test
 
-be: be-install be-build be-test
+be: be-install be-test be-dev
 
 be-install:
 	@echo "Installing dependencies for the Go backend..."
@@ -39,11 +50,11 @@ be-test:
 # Frontend tasks
 .PHONY: fe fe-build fe-test fe-dev
 
-fe: fe-install fe-build fe-test
+fe: fe-install fe-test fe-dev
 
 fe-install:
 	@echo "Installing dependencies for the NextJS site..."
-	cd $(FE_DIR) && bun install
+	cd $(FE_DIR) && rm -Rf node_modules && bun install
 
 fe-dev:
 	@echo "Starting the NextJS site in development mode..."
