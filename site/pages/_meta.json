@@ -1,15 +1,29 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
+  "index": {
+    "type": "page",
+    "display": "hidden"
+  },
+  "index-copy": {
+    "type": "page",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw",
+      "footer": false
+    }
+  },
+  "docs": {
+    "title": "Docs",
+    "type": "page"
+  },
   "about": {
     "title": "About",
     "type": "page"
   },
-  "contact": {
-    "title": "Contact ↗",
+  "404": {
     "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
+    "theme": {
+      "timestamp": false,
+      "typesetting": "article"
+    }
   }
 }
