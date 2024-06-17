@@ -1,0 +1,53 @@
+import Table from 'components/docs/Table'
+import Request from 'components/docs/Request'
+import Response from 'components/docs/Response'
+import Endpoint from 'components/docs/Endpoint'
+
+# Service root
+
+The service root provides a list of all the versions of the service available.
+
+It is the entry point for the service, and is used to discover the available versions of the service.
+
+## Endpoint
+
+<Endpoint
+    method="GET"
+    path="/"
+    params={[
+        {
+            key: "foo",
+            type: Endpoint.string,
+            required: false,
+            default: 'null',
+            description: "This is an example parameter which is not required and with a long description",
+        },
+        {
+            key: "bar",
+            type: Endpoint.boolean,
+        },
+    ]}
+/>
+
+## Request
+
+<Request
+    method="GET"
+    path="/"
+    params={{
+        foo: "text",
+        bar: true,
+    }}
+/>
+
+## Response
+
+<Response
+    data={{
+        service: "renderhook",
+        time: "10µs",
+        versions: {
+            v1: Response.url("/v1")
+        }
+    }}
+/>
